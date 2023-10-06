@@ -2,7 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/FireBaseErrorCodes.dart';
+import 'package:todo/UI/dialog_util.dart';
 import 'package:todo/UI/screens/Login/login_screen.dart';
+import 'package:todo/database/usersDao.dart';
+import 'package:todo/models/users.dart' as MyUser;
 import 'package:todo/provider/app_provider.dart';
 import 'package:todo/validation_util.dart';
 import 'package:todo/shared/components.dart';
@@ -146,7 +149,7 @@ class RegisterScreen extends StatelessWidget {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () async {
-                          createAccount();
+                          createAccount(context);
                         },
                         child: const Text(
                           "Register",
@@ -167,7 +170,7 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-  void createAccount() async {
+  void createAccount(BuildContext context) async {
     if (formKey.currentState!.validate() == false) {
       return;
     }
@@ -177,6 +180,17 @@ class RegisterScreen extends StatelessWidget {
         email: emailController.text,
         password: passwordController.text,
       );
+      await UserDao.createUser(
+        MyUser.User(
+          id: credential.user?.uid,
+          userName: userName.text,
+          fullName: fullName.text,
+          email: emailController.text,
+        )
+      );
+      DialogUtil.showMessage(context, 'Registered Successfully' , posActionTitle: 'ok' , posAction: (){
+        navigateAndFinish(context, LoginScreen());
+      });
       print(credential.user?.uid);
     } on FirebaseAuthException catch (e) {
       if (e.code == FireBaseErrorCodes.weakPassword) {

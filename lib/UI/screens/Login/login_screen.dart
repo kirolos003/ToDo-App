@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/Network/local/cache_helper.dart';
 import 'package:todo/UI/dialog_util.dart';
+import 'package:todo/UI/screens/Home/home_screen.dart';
 import 'package:todo/UI/screens/Register/register_screen.dart';
+import 'package:todo/database/usersDao.dart';
 import 'package:todo/provider/app_provider.dart';
 import 'package:todo/validation_util.dart';
 import 'package:todo/shared/components.dart';
@@ -145,15 +147,21 @@ class LoginScreen extends StatelessWidget {
         password: passwordController.text,
       );
       if (credential.user != null) {
+        var user = UserDao.getUser(credential.user!.uid);
         DialogUtil.hideDialog(context);
         CacheHelper.saveData(key: "token", value: credential.user!.uid);
-        DialogUtil.showMessage(context, 'This data is so confidential please press confirm to continue' , isDismissAble: false , posActionTitle: "Confirm" , negActionTitle: "Cancel");
+        DialogUtil.showMessage(context, 'This data is so confidential please press confirm to continue' , isDismissAble: false , posActionTitle: "Confirm" , negActionTitle: "Cancel" , negAction: (){
+          DialogUtil.hideDialog(context);
+        } , posAction: (){
+          DialogUtil.showLoading(context, 'Loading ....' , isDismissAble: false);
+          navigateTo(context, HomeScreen());
+        });
       } else {
         DialogUtil.showMessage(context, 'Wrong E-mail or Paasword');
       }
     } on FirebaseAuthException catch (_) {
       DialogUtil.hideDialog(context);
-      DialogUtil.showMessage(context, "Authentication failed. Please check your credentials.");
+      DialogUtil.showMessage(context, "Authentication failed. Wrong E-mail or Paaswor.");
     } catch (e, stackTrace) {
       print("Exception: $e\n$stackTrace");
       DialogUtil.showMessage(context, "Authentication failed. Please try again later.");

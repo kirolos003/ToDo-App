@@ -1,6 +1,8 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/Network/local/cache_helper.dart';
+import 'package:todo/models/task_model.dart';
+import 'package:todo/models/users.dart' as MyUser;
 
 class AppProvider extends ChangeNotifier {
   String isEnglish = 'en';
@@ -38,5 +40,8 @@ class AppProvider extends ChangeNotifier {
     suffix = isPassword ? Icons.visibility_off_outlined : Icons.visibility;
     notifyListeners();
   }
+
+  List<Task> userTasks = [];
+
 }
 

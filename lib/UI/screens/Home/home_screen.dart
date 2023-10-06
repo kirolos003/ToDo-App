@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/UI/screens/Settings/setting_screen.dart';
 import 'package:todo/UI/screens/Todos/list_screen.dart';
+import 'package:todo/database/tasksDao.dart';
+import 'package:todo/models/task_model.dart';
 import 'package:todo/provider/app_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int currentIndex = 0;
 
-  final List<Widget> screens = const [
+  final List<Widget> screens = [
     TaskListScreen(),
     SettingsScreen(),
   ];
@@ -92,18 +94,24 @@ class AddTaskBottomSheet extends StatefulWidget {
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   TextEditingController taskName = TextEditingController();
   TextEditingController taskDetails = TextEditingController();
-  TimeOfDay selectedTime = TimeOfDay.now();
+  DateTime selectedTime = DateTime.now();
   var formKey = GlobalKey<FormState>();
 
   Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: selectedTime,
+      initialTime: TimeOfDay.fromDateTime(selectedTime),
     );
 
-    if (picked != null && picked != selectedTime) {
+    if (picked != null && picked != TimeOfDay.fromDateTime(selectedTime)) {
       setState(() {
-        selectedTime = picked;
+        selectedTime = DateTime(
+          selectedTime.year,
+          selectedTime.month,
+          selectedTime.day,
+          selectedTime.hour,
+          selectedTime.minute,
+        );
       });
     }
   }
@@ -202,7 +210,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                         _selectTime(context);
                       },
                       child: Text(
-                        selectedTime.format(context),
+                        TimeOfDay.fromDateTime(selectedTime).format(context),
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -217,11 +225,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                       child: ElevatedButton(
                         onPressed: () {
                           if (formKey.currentState?.validate() == true) {
-                            // Task task = Task(title: taskName.toString(), description: taskDetails.toString(), time: selectedTime as DateTime);
-                            // FirebaseUtils.addTasksToFireStore(task).timeout(Duration(milliseconds: 500) , onTimeout: (){
-                            //   print("todo added successfully");
-                            // });
-                            // Navigator.pop(context);
+                            Task task = Task(title: taskName.text, description: taskDetails.text, time: selectedTime);
+                            TasksDao.addTask(task);
+                             Navigator.pop(context);
                           }
                         },
                         child: Text(

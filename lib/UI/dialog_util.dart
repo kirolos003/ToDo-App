@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:todo/UI/screens/Home/home_screen.dart';
-import 'package:todo/shared/components.dart';
 
 class DialogUtil{
   static void showLoading(BuildContext context , String message , {bool isDismissAble = true}){
@@ -9,8 +7,8 @@ class DialogUtil{
         builder: (context) => AlertDialog(
           content: Row(
             children: [
-              CircularProgressIndicator(),
-              SizedBox(width: 20,),
+              const CircularProgressIndicator(),
+              const SizedBox(width: 20,),
               Text(message),
             ],
           ),
@@ -26,18 +24,23 @@ class DialogUtil{
   static void showMessage(
       BuildContext context ,
       String message ,
-      {bool isDismissAble = true  , String? posActionTitle , String? negActionTitle}){
+      {
+        bool isDismissAble = true  ,
+        String? posActionTitle ,
+        String? negActionTitle ,
+        Function? posAction,
+        Function? negAction
+      }){
     List<Widget> actions = [];
     if(negActionTitle != null){
       actions.add(TextButton(onPressed: (){
-        hideDialog(context);
+        negAction?.call();
       }, child: Text(negActionTitle)));
     }
     if(posActionTitle != null){
       actions.add(TextButton(onPressed: (){
-        DialogUtil.showLoading(context, 'Loading ....' , isDismissAble: false);
-        navigateTo(context, HomeScreen());
-      }, child: Text(posActionTitle)));
+        posAction?.call();
+        }, child: Text(posActionTitle)));
     }
     showDialog(
       context: context,

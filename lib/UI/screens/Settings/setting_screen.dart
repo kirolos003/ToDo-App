@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/Network/local/cache_helper.dart';
+import 'package:todo/UI/dialog_util.dart';
 import 'package:todo/UI/screens/Login/login_screen.dart';
 import 'package:todo/provider/app_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -94,8 +95,12 @@ class _SettingScreenState extends State<SettingsScreen> {
               SizedBox(height: 30,),
               GestureDetector(
                 onTap: (){
-                  CacheHelper.removeData(key: "token");
-                  navigateTo(context, LoginScreen());
+                  DialogUtil.showMessage(context, "Are you sure you want to logout ?" , negActionTitle: "Cancel" , negAction: (){
+                    Navigator.pop(context);
+                  } , posActionTitle: "Yes" , posAction: (){
+                    CacheHelper.removeData(key: "token");
+                    navigateTo(context, LoginScreen());
+                  } , isDismissAble: true);
                 },
                 child: Row(
                   children: [

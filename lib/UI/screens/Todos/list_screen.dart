@@ -1,13 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:calendar_timeline/calendar_timeline.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/Network/local/cache_helper.dart';
+import 'package:todo/database/tasksDao.dart';
+import 'package:todo/models/task_model.dart';
 
 import '../../../provider/app_provider.dart';
 
-class TaskListScreen extends StatelessWidget {
-  const TaskListScreen({super.key});
+class TaskListScreen extends StatefulWidget {
 
+  TaskListScreen({super.key});
+
+  @override
+  State<TaskListScreen> createState() => _TaskListScreenState();
+}
+
+class _TaskListScreenState extends State<TaskListScreen> {
+   static List<Task> tasks = [];
+   void initState() {
+     super.initState();
+     getTasks(CacheHelper.getData(key: 'token'));
+     print(tasks);
+   }
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
@@ -33,8 +49,8 @@ class TaskListScreen extends StatelessWidget {
           ),
           Expanded(
             child: ListView.builder(
-              itemBuilder: (context, index) => const TaskWidgetBuilder(),
-              itemCount: 30,
+              itemBuilder: (context, index) => TaskWidgetBuilder(task : tasks[index]),
+              itemCount: tasks.length,
               physics: const BouncingScrollPhysics(),
             ),
           )
@@ -42,16 +58,38 @@ class TaskListScreen extends StatelessWidget {
       ),
     );
   }
+
+   void getTasks(String uid) async {
+     try {
+       var tasksCollection = FirebaseFirestore.instance
+           .collection('tasks')
+           .doc(uid)
+           .collection('userTasks');
+       var querySnapshot = await tasksCollection.get();
+       var retrievedTasks = querySnapshot.docs.map((doc) {
+         return Task.fromJson(doc.data());
+       }).toList();
+       setState(() {
+         print(retrievedTasks);
+         tasks = retrievedTasks;
+       });
+     } catch (error) {
+       print("Error fetching tasks: $error");
+     }
+   }
 }
 
 class TaskWidgetBuilder extends StatefulWidget {
-  const TaskWidgetBuilder({Key? key}) : super(key: key);
+  final Task task;
+  const TaskWidgetBuilder({Key? key  , required this.task}) : super(key: key);
 
   @override
-  State<TaskWidgetBuilder> createState() => _TaskWidgetBuilderState();
+  State<TaskWidgetBuilder> createState() => _TaskWidgetBuilderState(task: task);
 }
 
 class _TaskWidgetBuilderState extends State<TaskWidgetBuilder> {
+  final Task task;
+  _TaskWidgetBuilderState({required this.task});
   bool taskChecked = false;
   @override
   Widget build(BuildContext context) {
@@ -95,17 +133,18 @@ class _TaskWidgetBuilderState extends State<TaskWidgetBuilder> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Play BasketBall",
+                  task.title??'',
                   style: Theme.of(context).textTheme.bodySmall!.copyWith(
                     color: taskChecked ? const Color(0xff61E757) : Theme.of(context).primaryColor,
                   ),
                 ),
+                SizedBox(height: 5,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Icon(Icons.access_time , color: provider.isDark ? Colors.white : Colors.black,),
                     Text(
-                      "10:20 AM",
+                      "${task.time!}",
                       style: Theme.of(context).textTheme.labelSmall!.copyWith(
                           color: provider.isDark ? Colors.white : Colors.black
                       ),
@@ -147,4 +186,5 @@ class _TaskWidgetBuilderState extends State<TaskWidgetBuilder> {
       ),
     );
   }
+
 }
