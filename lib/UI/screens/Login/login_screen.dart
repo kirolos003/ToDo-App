@@ -152,12 +152,15 @@ class LoginScreen extends StatelessWidget {
         CacheHelper.saveData(key: "token", value: credential.user!.uid);
         DialogUtil.showMessage(context, 'This data is so confidential please press confirm to continue' , isDismissAble: false , posActionTitle: "Confirm" , negActionTitle: "Cancel" , negAction: (){
           DialogUtil.hideDialog(context);
+          CacheHelper.removeData(key: 'token');
         } , posAction: (){
           DialogUtil.showLoading(context, 'Loading ....' , isDismissAble: false);
           navigateTo(context, HomeScreen());
         });
       } else {
-        DialogUtil.showMessage(context, 'Wrong E-mail or Paasword');
+        DialogUtil.showMessage(context, 'Wrong E-mail or Paasword' , posActionTitle: "ok" , posAction: (){
+          Navigator.pop(context);
+        });
       }
     } on FirebaseAuthException catch (_) {
       DialogUtil.hideDialog(context);

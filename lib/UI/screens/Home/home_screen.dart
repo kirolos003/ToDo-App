@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/UI/screens/Settings/setting_screen.dart';
 import 'package:todo/UI/screens/Todos/list_screen.dart';
@@ -94,24 +97,22 @@ class AddTaskBottomSheet extends StatefulWidget {
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   TextEditingController taskName = TextEditingController();
   TextEditingController taskDetails = TextEditingController();
-  DateTime selectedTime = DateTime.now();
+  DateTime selectedDate = DateTime.now();
   var formKey = GlobalKey<FormState>();
 
   Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+    final DateTime? picked = await showDatePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(selectedTime),
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now() ,
+      lastDate : DateTime.now().add(Duration(
+        days: 365
+      )),
     );
 
-    if (picked != null && picked != TimeOfDay.fromDateTime(selectedTime)) {
+    if (picked != null) {
       setState(() {
-        selectedTime = DateTime(
-          selectedTime.year,
-          selectedTime.month,
-          selectedTime.day,
-          selectedTime.hour,
-          selectedTime.minute,
-        );
+        selectedDate = picked;
       });
     }
   }
@@ -208,9 +209,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                     child: GestureDetector(
                       onTap: () {
                         _selectTime(context);
-                      },
+                        },
                       child: Text(
-                        TimeOfDay.fromDateTime(selectedTime).format(context),
+                        DateFormat('MMMM dd, yyyy').format(selectedDate),
                         style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w400,
@@ -224,9 +225,24 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
+                          String generateRandomString(int length) {
+                            const String chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                            Random random = Random();
+                            String result = '';
+                            for (int i = 0; i < length; i++) {
+                              result += chars[random.nextInt(chars.length)];
+                            }
+                            return result;
+                          }
                           if (formKey.currentState?.validate() == true) {
-                            Task task = Task(title: taskName.text, description: taskDetails.text, time: selectedTime);
+                            Task task = Task(
+                                title: taskName.text,
+                                description: taskDetails.text,
+                                time: selectedDate,
+                                id : generateRandomString(10),
+                            );
                             TasksDao.addTask(task);
+                            provider.getTasks();
                              Navigator.pop(context);
                           }
                         },

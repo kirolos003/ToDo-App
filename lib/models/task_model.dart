@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Task {
   static const String collectionName= 'tasks';
   String? id;
@@ -19,7 +21,7 @@ class Task {
       'id': id,
       'title': title,
       'description': description,
-      'time': time?.toIso8601String(),
+      'time': time,
       'isDone': isDone,
     };
   }
@@ -36,10 +38,10 @@ class Task {
 
   factory Task.fromJson(Map<String, dynamic>? json) {
     return Task(
-        id : json?['id'] as String,
+        id : json?['id'],
         title: json?['title'],
         description: json?['description'],
-        time: DateTime.parse(json?['time']),
+        time: (json?['time'] as Timestamp).toDate(),
         isDone : json?['isDone'] as bool,
     );
   }
