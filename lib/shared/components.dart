@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../Network/local/cache_helper.dart';
+
 Widget defaultButton({
   Color background = Colors.blue,
   double width = double.infinity,
@@ -41,6 +43,7 @@ Widget defaultTextForm({
   bool isClickable = true,
 }) =>
     TextFormField(
+      style: TextStyle(color:CacheHelper.getData(key: 'isDark') ? const Color(0xffDFECDB) : const Color(0xff060E1E)), // Text color
       controller: controller,
       keyboardType: type,
       enabled: isClickable,
@@ -49,15 +52,31 @@ Widget defaultTextForm({
       onChanged: onchange,
       //onTap: onTap,
       decoration: InputDecoration(
+        hintStyle: TextStyle(color: Colors.grey), // Hint text color
+        labelStyle: TextStyle(
+            color: CacheHelper.getData(key: 'isDark') == true
+                ? Colors.white
+                : Colors.black), // Set label color here
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+              color: CacheHelper.getData(key: 'isDark') == true
+                  ? Colors.white
+                  : Colors.black),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: CacheHelper.getData(key: 'isDark')
+              ? Colors.white
+              : Colors.black), // Border color when the field is focused
+        ),
         hintText: hintText,
         labelText: label,
         border: UnderlineInputBorder(),
         prefixIcon: pre,
         suffixIcon: suf != null
             ? IconButton(
-          onPressed: suffixPressed,
-          icon: Icon(suf),
-        )
+                onPressed: suffixPressed,
+                icon: Icon(suf),
+              )
             : null,
       ),
       validator: validate,
@@ -429,4 +448,3 @@ Widget BuildCourseItem(
         ],
       ),
     );
-

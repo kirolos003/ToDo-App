@@ -22,9 +22,7 @@ void main() async {
       const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   Widget? widget;
   await CacheHelper.init();
-  String? token = await CacheHelper.getData(
-      key: 'token'
-  );
+  String? token = await CacheHelper.getData(key: 'token');
   if (token != null) {
     widget = const HomeScreen();
   } else {
@@ -36,14 +34,21 @@ void main() async {
       create: (BuildContext context) => AppProvider()
         ..changeAppTheme(fromShared: isDark)
         ..changeAppLanguage(fromShared: isEnglish),
-      child: MyApp(isDark: isDark, isEnglish: isEnglish , startWidget: widget,)));
+      child: MyApp(
+        isDark: isDark,
+        isEnglish: isEnglish,
+        startWidget: widget,
+      )));
 }
 
 class MyApp extends StatelessWidget {
   final bool? isDark;
   final String? isEnglish;
   final Widget? startWidget;
-  MyApp({required this.isDark, required this.isEnglish , required this.startWidget});
+  const MyApp(
+      {super.key, required this.isDark,
+      required this.isEnglish,
+      required this.startWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -56,20 +61,23 @@ class MyApp extends StatelessWidget {
       themeMode: provider.isDark ? ThemeMode.dark : ThemeMode.light,
       debugShowCheckedModeBanner: false,
       locale: Locale(provider.isEnglish == 'en' ? 'en' : 'ar'),
-      home: SplashScreen(startWidget: startWidget,),
+      home: SplashScreen(
+        startWidget: startWidget,
+      ),
     );
   }
 }
 
 class SplashScreen extends StatefulWidget {
   final Widget? startWidget;
-  SplashScreen({required this.startWidget});
+  const SplashScreen({super.key, required this.startWidget});
   @override
-  State<SplashScreen> createState() => SplashScreenState(startWidget: startWidget);
+  State<SplashScreen> createState() =>
+      SplashScreenState(startWidget: startWidget);
 }
 
 class SplashScreenState extends State<SplashScreen> {
-  final Widget? startWidget ;
+  final Widget? startWidget;
   SplashScreenState({required this.startWidget});
   @override
   void initState() {

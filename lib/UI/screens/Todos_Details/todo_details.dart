@@ -5,7 +5,6 @@ import 'package:todo/Network/local/cache_helper.dart';
 import 'package:todo/models/task_model.dart';
 import 'package:todo/provider/app_provider.dart';
 
-
 class TodoDetailsScreen extends StatefulWidget {
   const TodoDetailsScreen({Key? key}) : super(key: key);
 
@@ -14,14 +13,15 @@ class TodoDetailsScreen extends StatefulWidget {
 }
 
 class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
-    @override
-  void initState(){
-      super.initState();
+  @override
+  void initState() {
+    super.initState();
+  }
 
-    }
   @override
   Widget build(BuildContext context) {
-    final Task receivedData = ModalRoute.of(context)?.settings.arguments as Task;
+    final Task receivedData =
+        ModalRoute.of(context)?.settings.arguments as Task;
     AppProvider provider = Provider.of<AppProvider>(context);
     TextEditingController taskName = TextEditingController();
     TextEditingController taskDetails = TextEditingController();
@@ -31,9 +31,7 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
         context: context,
         initialDate: DateTime.now(),
         firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(const Duration(
-            days: 365
-        )),
+        lastDate: DateTime.now().add(const Duration(days: 365)),
       );
 
       if (picked != null) {
@@ -43,34 +41,35 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
       }
     }
     var formKey = GlobalKey<FormState>();
-    
     return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color : provider.isDark ? const Color(0xffDFECDB) : const Color(0xff060E1E)),
+        backgroundColor:
+        provider.isDark ? const Color(0xff060E1E) : const Color(0xffDFECDB),
+      ),
       body: Center(
         child: Container(
           decoration: BoxDecoration(
-            color: provider.isDark ? const Color(0xff060E1E) : const Color(
-                0xffDFECDB),
+            color: provider.isDark
+                ? const Color(0xff060E1E)
+                : const Color(0xffDFECDB),
           ),
           child: SafeArea(
             minimum: const EdgeInsets.all(2),
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white
-              ),
+              decoration: BoxDecoration(color:CacheHelper.getData(key: 'isDark') == true
+                  ? Colors.transparent
+                  : Colors.white),
               padding: const EdgeInsets.all(20),
-              margin: const EdgeInsets.all(30),
+              margin: const EdgeInsets.all(15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Update Task",
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .bodySmall!
-                        .copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
                   ),
                   const SizedBox(
                     height: 20,
@@ -80,15 +79,15 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
                     child: Column(
                       children: [
                         TextFormField(
-                          onChanged: (text){
-                            if(text.isNotEmpty ) {
+                          onChanged: (text) {
+                            if (text.isNotEmpty) {
                               taskName.text = text;
                             }
                           },
                           initialValue: receivedData.title,
-                          style: provider.isDark ? const TextStyle(
-                              color: Colors.white) : const TextStyle(
-                              color: Colors.black),
+                          style: provider.isDark
+                              ? const TextStyle(color: Colors.white)
+                              : const TextStyle(color: Colors.black),
                           validator: (text) {
                             if (text == null || text.isEmpty) {
                               return "Task Title cannot be Empty";
@@ -103,26 +102,24 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
                                   : const Color(0xff141922),
                             ),
                             focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors
-                                  .blue),
+                              borderSide: BorderSide(color: Colors.blue),
                             ),
                             enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors
-                                  .grey),
+                              borderSide: BorderSide(color: Colors.grey),
                             ),
                           ),
                         ),
                         const SizedBox(height: 30),
                         TextFormField(
-                          onChanged: (text){
-                            if(text.isNotEmpty ) {
+                          onChanged: (text) {
+                            if (text.isNotEmpty) {
                               taskDetails.text = text;
                             }
                           },
                           initialValue: receivedData.description,
-                          style: provider.isDark ? const TextStyle(
-                              color: Colors.white) : const TextStyle(
-                              color: Colors.black),
+                          style: provider.isDark
+                              ? const TextStyle(color: Colors.white)
+                              : const TextStyle(color: Colors.black),
                           validator: (text) {
                             if (text == null || text.isEmpty) {
                               return "Task Details cannot be Empty";
@@ -137,12 +134,14 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
                                   : const Color(0xff141922),
                             ),
                             focusedBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors
-                                  .blue), // Replace with your desired color
+                              borderSide: BorderSide(
+                                  color: Colors
+                                      .blue), // Replace with your desired color
                             ),
                             enabledBorder: const UnderlineInputBorder(
-                              borderSide: BorderSide(color: Colors
-                                  .grey), // Replace with your desired color
+                              borderSide: BorderSide(
+                                  color: Colors
+                                      .grey), // Replace with your desired color
                             ),
                           ),
                         ),
@@ -178,8 +177,19 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
                         Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: SizedBox(
+                            height: 42,
                             width: double.infinity,
                             child: ElevatedButton(
+                              style : ButtonStyle(
+                                backgroundColor:
+                                MaterialStateProperty.resolveWith((states) {
+                                  if (CacheHelper.getData(key: 'isDark') == true) {
+                                    return Colors.grey;
+                                  } else {
+                                    return Colors.black;
+                                  }
+                                }),
+                              ),
                               onPressed: () {
                                 if (formKey.currentState?.validate() == true) {
                                   Task task = Task(
@@ -196,10 +206,7 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
                               },
                               child: Text(
                                 "update",
-                                style: Theme
-                                    .of(context)
-                                    .textTheme
-                                    .bodyMedium,
+                                style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
                           ),
@@ -216,6 +223,3 @@ class _TodoDetailsScreenState extends State<TodoDetailsScreen> {
     );
   }
 }
-
-
-

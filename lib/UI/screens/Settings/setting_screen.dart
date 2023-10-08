@@ -15,13 +15,13 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingsScreen> {
-
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
     return Container(
       decoration: BoxDecoration(
-        color:provider.isDark ? const Color(0xff060E1E) : const Color(0xffDFECDB),
+        color:
+            provider.isDark ? const Color(0xff060E1E) : const Color(0xffDFECDB),
       ),
       child: SafeArea(
         minimum: const EdgeInsets.all(2),
@@ -31,31 +31,36 @@ class _SettingScreenState extends State<SettingsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(AppLocalizations.of(context)!.settings ,
+              Text(
+                AppLocalizations.of(context)!.settings,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(
                 height: 40,
               ),
-              Text(AppLocalizations.of(context)!.language ,
+              Text(
+                AppLocalizations.of(context)!.language,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(
-                height: 10,),
+                height: 10,
+              ),
               InkWell(
-                onTap: (){
+                onTap: () {
                   showLanguageBottomSheet();
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(15)
-                  ),
+                      borderRadius: BorderRadius.circular(15)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(provider.isEnglish == 'en' ? AppLocalizations.of(context)!.english : AppLocalizations.of(context)!.arabic ,
+                      Text(
+                        provider.isEnglish == 'en'
+                            ? AppLocalizations.of(context)!.english
+                            : AppLocalizations.of(context)!.arabic,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const Icon(Icons.arrow_drop_down_outlined)
@@ -63,28 +68,30 @@ class _SettingScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ),
-              const SizedBox(
-                  height: 25
-              ),
-              Text(AppLocalizations.of(context)!.theme ,
+              const SizedBox(height: 25),
+              Text(
+                AppLocalizations.of(context)!.theme,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(
-                height: 10,),
+                height: 10,
+              ),
               InkWell(
-                onTap: (){
+                onTap: () {
                   showThemeBottomSheet();
                 },
                 child: Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
-                      borderRadius: BorderRadius.circular(15)
-                  ),
+                      borderRadius: BorderRadius.circular(15)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(provider.isDark ? AppLocalizations.of(context)!.dark : AppLocalizations.of(context)!.light ,
+                      Text(
+                        provider.isDark
+                            ? AppLocalizations.of(context)!.dark
+                            : AppLocalizations.of(context)!.light,
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                       const Icon(Icons.arrow_drop_down_outlined)
@@ -92,27 +99,42 @@ class _SettingScreenState extends State<SettingsScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 30,),
+              const SizedBox(
+                height: 30,
+              ),
               GestureDetector(
-                onTap: (){
-                  DialogUtil.showMessage(context, "Are you sure you want to logout ?" , negActionTitle: "Cancel" , negAction: (){
-                    Navigator.pop(context);
-                  } , posActionTitle: "Yes" , posAction: (){
-                    CacheHelper.removeData(key: "token");
-                    navigateTo(context, LoginScreen());
-                  } , isDismissAble: true);
+                onTap: () {
+                  DialogUtil.showMessage(
+                      context, "Are you sure you want to logout ?",
+                      negActionTitle: "Cancel",
+                      negAction: () {
+                        Navigator.pop(context);
+                      },
+                      posActionTitle: "Yes",
+                      posAction: () {
+                        CacheHelper.removeData(key: "token");
+                        navigateAndFinish(context, LoginScreen());
+                      },
+                      isDismissAble: true);
                 },
                 child: Row(
                   children: [
-                    ElevatedButton(onPressed: (){},
-                        child: Icon(Icons.login_outlined , size: 40,) , style: ButtonStyle(
-                          backgroundColor: MaterialStatePropertyAll<Color>(
-                            provider.isDark ?  Color(0xff060E1E) :  Color(0xffDFECDB),
-                          )
-                        )
+                    ElevatedButton(
+                        onPressed: () {},
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(
+                          provider.isDark
+                              ? const Color(0xff060E1E)
+                              : const Color(0xffDFECDB),
+                        )),
+                        child: const Icon(
+                          Icons.login_outlined,
+                          size: 40,
+                        )),
+                    const SizedBox(
+                      width: 20,
                     ),
-                    SizedBox(width: 20,),
-                    Text("Log out"),
+                    const Text("Log out"),
                   ],
                 ),
               )
@@ -124,47 +146,52 @@ class _SettingScreenState extends State<SettingsScreen> {
   }
 
   void showLanguageBottomSheet() {
-    showModalBottomSheet(context: context, builder: (context) => const LanguageBottomSheet());
+    showModalBottomSheet(
+        context: context, builder: (context) => const LanguageBottomSheet());
   }
 
   void showThemeBottomSheet() {
-    showModalBottomSheet(context: context, builder: (context) => const ThemeBottomSheet());
+    showModalBottomSheet(
+        context: context, builder: (context) => const ThemeBottomSheet());
   }
 }
 
-class LanguageBottomSheet extends StatelessWidget{
+class LanguageBottomSheet extends StatelessWidget {
   const LanguageBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
     return Container(
-      color: provider.isDark ? const Color(0xff141922) : const Color(0xffDFECDB),
+      color:
+          provider.isDark ? const Color(0xff141922) : const Color(0xffDFECDB),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
-            onTap: (){
+            onTap: () {
               provider.changeAppLanguage();
             },
-            child: Text(AppLocalizations.of(context)!.english ,
+            child: Text(
+              AppLocalizations.of(context)!.english,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: provider.isDark ? Colors.white :  Colors.black,
-              ),
+                    color: provider.isDark ? Colors.white : Colors.black,
+                  ),
             ),
           ),
           const SizedBox(
             height: 20,
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               provider.changeAppLanguage();
             },
-            child: Text(AppLocalizations.of(context)!.arabic ,
+            child: Text(
+              AppLocalizations.of(context)!.arabic,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: provider.isDark ? Colors.white : Colors.black,
-              ),
+                    color: provider.isDark ? Colors.white : Colors.black,
+                  ),
             ),
           ),
         ],
@@ -173,39 +200,42 @@ class LanguageBottomSheet extends StatelessWidget{
   }
 }
 
-class ThemeBottomSheet extends StatelessWidget{
+class ThemeBottomSheet extends StatelessWidget {
   const ThemeBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
     AppProvider provider = Provider.of<AppProvider>(context);
     return Container(
-      color: provider.isDark ? const Color(0xff141922) : const Color(0xffDFECDB),
+      color:
+          provider.isDark ? const Color(0xff141922) : const Color(0xffDFECDB),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           InkWell(
-            onTap: (){
+            onTap: () {
               provider.changeAppTheme();
             },
-            child: Text(AppLocalizations.of(context)!.light ,
+            child: Text(
+              AppLocalizations.of(context)!.light,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: provider.isDark ? Colors.white :  Colors.black,
-              ),
+                    color: provider.isDark ? Colors.white : Colors.black,
+                  ),
             ),
           ),
           const SizedBox(
             height: 20,
           ),
           InkWell(
-            onTap: (){
+            onTap: () {
               provider.changeAppTheme();
             },
-            child: Text(AppLocalizations.of(context)!.dark ,
+            child: Text(
+              AppLocalizations.of(context)!.dark,
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                color: provider.isDark ? Colors.white :  Colors.black,
-              ),
+                    color: provider.isDark ? Colors.white : Colors.black,
+                  ),
             ),
           ),
         ],
@@ -213,4 +243,3 @@ class ThemeBottomSheet extends StatelessWidget{
     );
   }
 }
-

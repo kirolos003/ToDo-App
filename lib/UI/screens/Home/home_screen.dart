@@ -51,8 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Theme(
           data: provider.isDark
               ? Theme.of(context).copyWith(canvasColor: const Color(0xff141A2E))
-              : Theme.of(context)
-              .copyWith(canvasColor: Colors.white),
+              : Theme.of(context).copyWith(canvasColor: Colors.white),
           child: BottomNavigationBar(
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.list), label: ""),
@@ -67,7 +66,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         shape: StadiumBorder(
           side: BorderSide(
-            color: provider.isDark ? const Color(0xff141A2E) : const Color(0xffDFECDB),
+            color: provider.isDark
+                ? const Color(0xff141A2E)
+                : const Color(0xffDFECDB),
             width: 4,
           ),
         ),
@@ -104,10 +105,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime.now() ,
-      lastDate : DateTime.now().add(Duration(
-        days: 365
-      )),
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(Duration(days: 365)),
     );
 
     if (picked != null) {
@@ -122,7 +121,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
     AppProvider provider = Provider.of<AppProvider>(context);
     return Container(
       decoration: BoxDecoration(
-        color: provider.isDark ? const Color(0xff141922) : const Color(0xffDFECDB),
+        color:
+            provider.isDark ? const Color(0xff141922) : const Color(0xffDFECDB),
       ),
       padding: const EdgeInsets.all(40),
       child: SingleChildScrollView(
@@ -131,8 +131,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
             Text(
               "Add new Task",
               style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+                    fontWeight: FontWeight.w700,
+                  ),
             ),
             const SizedBox(
               height: 20,
@@ -142,7 +142,9 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
               child: Column(
                 children: [
                   TextFormField(
-                    style: provider.isDark ? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black),
+                    style: provider.isDark
+                        ? const TextStyle(color: Colors.white)
+                        : const TextStyle(color: Colors.black),
                     controller: taskName,
                     validator: (text) {
                       if (text == null || text.isEmpty) {
@@ -158,16 +160,22 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                             : const Color(0xff141922),
                       ),
                       focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue), // Replace with your desired color
+                        borderSide: BorderSide(
+                            color:
+                                Colors.blue), // Replace with your desired color
                       ),
                       enabledBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey), // Replace with your desired color
+                        borderSide: BorderSide(
+                            color:
+                                Colors.grey), // Replace with your desired color
                       ),
                     ),
                   ),
                   const SizedBox(height: 30),
                   TextFormField(
-                    style: provider.isDark ? const TextStyle(color: Colors.white) : const TextStyle(color: Colors.black),
+                    style: provider.isDark
+                        ? const TextStyle(color: Colors.white)
+                        : const TextStyle(color: Colors.black),
                     controller: taskDetails,
                     validator: (text) {
                       if (text == null || text.isEmpty) {
@@ -183,10 +191,14 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                             : const Color(0xff141922),
                       ),
                       focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blue), // Replace with your desired color
+                        borderSide: BorderSide(
+                            color:
+                                Colors.blue), // Replace with your desired color
                       ),
                       enabledBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.grey), // Replace with your desired color
+                        borderSide: BorderSide(
+                            color:
+                                Colors.grey), // Replace with your desired color
                       ),
                     ),
                   ),
@@ -209,7 +221,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                     child: GestureDetector(
                       onTap: () {
                         _selectTime(context);
-                        },
+                      },
                       child: Text(
                         DateFormat('MMMM dd, yyyy').format(selectedDate),
                         style: const TextStyle(
@@ -226,7 +238,8 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                       child: ElevatedButton(
                         onPressed: () {
                           String generateRandomString(int length) {
-                            const String chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+                            const String chars =
+                                'abcdefghijklmnopqrstuvwxyz0123456789';
                             Random random = Random();
                             String result = '';
                             for (int i = 0; i < length; i++) {
@@ -234,17 +247,18 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                             }
                             return result;
                           }
+
                           if (formKey.currentState?.validate() == true) {
                             Task task = Task(
-                                title: taskName.text,
-                                description: taskDetails.text,
-                                time: selectedDate,
-                                id : generateRandomString(10),
+                              title: taskName.text,
+                              description: taskDetails.text,
+                              time: selectedDate,
+                              id: generateRandomString(10),
                             );
                             TasksDao.addTask(task);
                             print(task.id);
                             provider.getTasks();
-                             Navigator.pop(context);
+                            Navigator.pop(context);
                           }
                         },
                         child: Text(
