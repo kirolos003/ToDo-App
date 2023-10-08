@@ -20,7 +20,8 @@ abstract class TasksDao{
 
   static Future<void> addTask(Task task) async {
     var usersTasksCollection = getTasksCollection(CacheHelper.getData(key: 'token'));
-      usersTasksCollection.add(task);
+    var doc = usersTasksCollection.doc(task.id);
+    return doc.set(task);
   }
 
 

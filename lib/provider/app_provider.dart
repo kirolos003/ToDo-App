@@ -1,9 +1,7 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/Network/local/cache_helper.dart';
 import 'package:todo/database/tasksDao.dart';
 import 'package:todo/models/task_model.dart';
-import 'package:todo/models/users.dart' as MyUser;
 
 class AppProvider extends ChangeNotifier {
   String isEnglish = 'ar';
@@ -43,24 +41,58 @@ class AppProvider extends ChangeNotifier {
   }
 
   List<Task> tasks = [];
+  DateTime selectedDate = DateTime.now();
 
-  void getTasks({String? uid ,DateTime? date}) async {
+  void getTasks({String? uid}) async {
     var tasksCollection = TasksDao.getTasksCollection(CacheHelper.getData(key: 'token'));
     var querySnapshot = await tasksCollection.get();
     tasks = querySnapshot.docs.map((doc) {
       return doc.data();
     }).toList();
     notifyListeners();
-    if (date != null) {
-      // retrievedTasks.contains(arrayContains:); // isequalto
-    }
+    tasks = tasks.where((task) {
+      if(
+      task.time?.day == selectedDate.day &&
+          task.time?.month == selectedDate.month &&
+          selectedDate.year == task.time?.year){
+        return true;
+      }else{
+        return false;
+      }
+    }).toList();
+
+    tasks.sort((Task task1 , Task task2){
+      // 0 => in the compare if they are equal it will return 0
+      // 1 => in the compare if the task 2 is greater than task 1 it will return 1
+      // -1 => in the compare if the task 2 is greater than task 1 it will return -1
+      return task1.time!.compareTo(task2.time!);
+    });
+
+    notifyListeners();
+  }
+
+  void changeDate(DateTime newDate){
+    selectedDate = newDate;
+    getTasks();
   }
 
   static Future<void> deleteTask(Task task , String uid) {
-    return TasksDao.getTasksCollection(uid).doc(task.id).delete().timeout(Duration(seconds: 1) , onTimeout: (){
-      print('finshed');
+    return TasksDao.getTasksCollection(uid).doc(task.id).delete().timeout(const Duration(seconds: 1) , onTimeout: (){
     });
   }
 
+
+
+
+  bool taskChecked = false;
+
+  Future<void> updateTask(Task task, String uid, {bool isDone = false}) {
+    return TasksDao.getTasksCollection(uid)
+        .doc(task.id)
+        .update({'isDone': isDone , 'title' : task.title , 'description' : task.description ,'time' :task.time}).timeout(const Duration(milliseconds: 500) , onTimeout: (){
+      taskChecked = isDone;
+      notifyListeners();
+    });
+  }
 }
 

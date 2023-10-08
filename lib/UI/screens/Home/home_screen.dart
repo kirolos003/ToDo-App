@@ -242,6 +242,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
                                 id : generateRandomString(10),
                             );
                             TasksDao.addTask(task);
+                            print(task.id);
                             provider.getTasks();
                              Navigator.pop(context);
                           }

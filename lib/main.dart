@@ -19,7 +19,7 @@ void main() async {
   );
   await FirebaseFirestore.instance.disableNetwork();
   FirebaseFirestore.instance.settings =
-      Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
+      const Settings(cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   Widget? widget;
   await CacheHelper.init();
   String? token = await CacheHelper.getData(
@@ -65,15 +65,14 @@ class SplashScreen extends StatefulWidget {
   final Widget? startWidget;
   SplashScreen({required this.startWidget});
   @override
-  State<SplashScreen> createState() => _SplashScreenState(startWidget: startWidget);
+  State<SplashScreen> createState() => SplashScreenState(startWidget: startWidget);
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class SplashScreenState extends State<SplashScreen> {
   final Widget? startWidget ;
-  _SplashScreenState({required this.startWidget});
+  SplashScreenState({required this.startWidget});
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     Timer(const Duration(seconds: 3), () {
       navigateAndFinish(context, startWidget);

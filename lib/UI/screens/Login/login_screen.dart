@@ -155,7 +155,7 @@ class LoginScreen extends StatelessWidget {
           CacheHelper.removeData(key: 'token');
         } , posAction: (){
           DialogUtil.showLoading(context, 'Loading ....' , isDismissAble: false);
-          navigateTo(context, HomeScreen());
+          navigateAndFinish(context, HomeScreen());
         });
       } else {
         DialogUtil.showMessage(context, 'Wrong E-mail or Paasword' , posActionTitle: "ok" , posAction: (){

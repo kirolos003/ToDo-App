@@ -8,8 +8,8 @@ class Task {
   DateTime? time;
   bool? isDone;
 
-  Task(
-      {this.id = '',
+  Task({
+      this.id,
       required this.title,
       required this.description,
       required this.time,
